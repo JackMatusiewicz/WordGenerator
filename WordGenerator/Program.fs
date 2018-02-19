@@ -82,7 +82,7 @@ let main argv =
     |> addStartSymbols
     |> constructTrigrams
     |> List.fold (flip add) Map.empty
-    //|> addSmoothing
+    |> addSmoothing
     |> printfn "%A"
     0 // return an integer exit code
 
