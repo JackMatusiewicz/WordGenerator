@@ -21,6 +21,18 @@ let makeTrigram a b c : Trigram = a,b,c
 let addStartSymbols (w : string) =
     "$$" + w
 
+let addToOccurrences (c : char) (occ : Occurrences) : Occurrences =
+    match Map.tryFind c occ with
+    | None ->
+        Map.add c 1 occ
+    | Some n ->
+        Map.add c (n + 1) occ
+
+let orDefault (v : 'a) (a : 'a option) =
+    match a with
+    | Some b -> b
+    | None -> v
+
 let constructTrigrams (w : Word) : Trigram list =
 
     let rec calc
@@ -43,18 +55,10 @@ let constructTrigrams (w : Word) : Trigram list =
 
 let add ((f,s,v) : Trigram) (m : TrigramStore) : TrigramStore =
     let prefix = {First = f; Second = s}
-    match Map.tryFind prefix m with
-    | None ->
-        let store = Map.add v 1 Map.empty
-        Map.add prefix store m
-    | Some occ ->
-        match Map.tryFind v occ with
-        | Some n ->
-            let s = Map.add v (n + 1) occ
-            Map.add prefix s m
-        | None ->
-            let s = Map.add v 1 occ
-            Map.add prefix s m
+    Map.tryFind prefix m
+    |> Option.map (addToOccurrences v)
+    |> orDefault (Map.add v 1 (Map.empty))
+    |> (fun v -> Map.add prefix v m)
 
 let addSmoothing (m : TrigramStore) : TrigramStore =
     makeTrigram
@@ -78,7 +82,7 @@ let main argv =
     |> addStartSymbols
     |> constructTrigrams
     |> List.fold (flip add) Map.empty
-    |> addSmoothing
+    //|> addSmoothing
     |> printfn "%A"
     0 // return an integer exit code
 
