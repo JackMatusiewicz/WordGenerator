@@ -65,12 +65,10 @@ let addSmoothing (m : TrigramStore) : TrigramStore =
     |> List.fold (flip add) m
 
 let constructModel (words : Word list) =
-    let model = Map.empty
-
     words
     |> List.map addStartSymbols
     |> List.collect constructTrigrams
-    |> List.fold (flip add) model
+    |> List.fold (flip add) Map.empty
     |> addSmoothing
 
 [<EntryPoint>]
