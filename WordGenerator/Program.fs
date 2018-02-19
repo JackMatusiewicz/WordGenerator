@@ -84,5 +84,4 @@ let main argv =
     |> List.fold (flip add) Map.empty
     |> addSmoothing
     |> printfn "%A"
-    0 // return an integer exit code
-
+    0
