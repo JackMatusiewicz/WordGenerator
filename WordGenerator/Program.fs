@@ -1,4 +1,5 @@
-﻿
+﻿open System.Text
+
 type Word = string
 type Occurrences = Map<char, int>
 type Prefix = {First : char; Second : char}
@@ -6,6 +7,21 @@ type Trigram = char*char*char
 type TrigramStore = Map<Prefix, Occurrences>
 
 let (<!>) = List.map
+
+let pick (randomRange : int -> int) (occ : Occurrences) : char =
+    let data = Map.toList occ |> List.sortBy fst
+    let total = data |> List.map snd |> List.sum
+    let chosenIndex = randomRange (total + 1)
+
+    let rec find (acc : int) (vals : (char*int) list) =
+        match vals with
+        | [] -> failwith "TODO - force to never happen"
+        | (c,v)::t ->
+            let newAcc = acc - v
+            if newAcc <= 0 then
+                c
+            else find newAcc t
+    find chosenIndex data
 
 let flip (f : 'a -> 'b -> 'c) =
     fun b a -> f a b
@@ -85,9 +101,66 @@ let constructModel (words : Word list) =
     |> List.fold (flip add) Map.empty
     |> addSmoothing
 
+let buildName (store : TrigramStore) =
+    let sb = (new StringBuilder()).Append("$$")
+    let state = {First = '$'; Second = '$'}
+    let r = System.Random()
+    let next = fun i -> r.Next(0, i)
+
+    let rec build (acc : StringBuilder) (state : Prefix) =
+        let occ = Map.find state store
+        let c = pick next occ
+        if c = '@' then
+            sb.ToString().TrimStart([|'$'|])
+        else
+            let newState = {First = state.Second; Second = c}
+            build (acc.Append(c)) newState
+    build sb state
+
 [<EntryPoint>]
 let main argv =
-    ["muradin"; "gimli"; "gloin"]
-    |> constructModel
-    |> printfn "%A"
+    let model =
+        [
+            "durond"
+            "dorum"
+            "kilond"
+            "brorak"
+            "thum"
+            "gomond"
+            "hatil"
+            "fimo"
+            "baltil"
+            "norain"
+            "ovrund"
+            "dlin"
+            "munur"
+            "garil"
+            "dordin"
+            "calri"
+            "simdri"
+            "hertri"
+            "biltri"
+            "ovum"
+            "chalain"
+            "farum"
+            "bolond"
+            "bilrund"
+            "bofond"
+            "normin"
+            "fimil"
+            "thinin"
+            "dgol"
+            "dtri"
+            "storrak"
+            "bilunn"
+            "bilbar"
+            "harak"
+            "ovkon"
+            "dorni"
+            "runbar"
+            "herlin"
+        ]
+        |> constructModel
+    let name = buildName model
+    printfn "%s" name
     0
