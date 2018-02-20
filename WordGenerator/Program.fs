@@ -10,10 +10,16 @@ let (<!>) = List.map
 let flip (f : 'a -> 'b -> 'c) =
     fun b a -> f a b
 
-let rec apply (fs : ('a -> 'b) list) (xs : 'a list) =
-    match fs with
-    | [] -> []
-    | f::t -> (List.map f xs) @ (apply t xs)
+let apply (fs : ('a -> 'b) list) (xs : 'a list) =
+    let rec calc (acc : 'b list list) fs =
+        match fs with
+        | [] ->
+            acc
+            |> List.rev
+            |> List.concat
+        | (h::t) ->
+            calc ((h <!> xs) :: acc) t
+    calc [] fs
 let (<*>) = apply
 
 let makeTrigram a b c : Trigram = a,b,c
