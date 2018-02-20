@@ -73,7 +73,7 @@ let addSmoothing (m : TrigramStore) : TrigramStore =
     makeTrigram
     <!> ('$' :: ['a' .. 'z'])
     <*> ('$' :: ['a' .. 'z'])
-    <*> ['a' .. 'z']
+    <*> ('@' :: ['a' .. 'z'])
     |> List.filter (fun (a,b,_) -> not (a <> '$' && b = '$'))
     |> List.fold (flip add) m
 
