@@ -21,6 +21,9 @@ let makeTrigram a b c : Trigram = a,b,c
 let addStartSymbols (w : string) =
     "$$" + w
 
+let addEndSymbol (w : string) =
+    w + "@"
+
 let addToOccurrences (c : char) (occ : Occurrences) : Occurrences =
     match Map.tryFind c occ with
     | None ->
@@ -71,17 +74,14 @@ let addSmoothing (m : TrigramStore) : TrigramStore =
 let constructModel (words : Word list) =
     words
     |> List.map addStartSymbols
+    |> List.map addEndSymbol
     |> List.collect constructTrigrams
     |> List.fold (flip add) Map.empty
     |> addSmoothing
 
 [<EntryPoint>]
-let main argv = 
-    let word = "muradin"
-    word
-    |> addStartSymbols
-    |> constructTrigrams
-    |> List.fold (flip add) Map.empty
-    |> addSmoothing
+let main argv =
+    ["muradin"; "gimli"; "gloin"]
+    |> constructModel
     |> printfn "%A"
     0
