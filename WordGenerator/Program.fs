@@ -13,7 +13,7 @@ let (<!>) = List.map
 
 let pick (randomRange : int -> int) (occ : Occurrences) : Result<string, char> =
     let data = Map.toList occ |> List.sortBy fst
-    let total = data |> List.map snd |> List.sum
+    let total = data |> List.sumBy snd
     let chosenIndex = randomRange (total + 1)
 
     let rec find (acc : int) (vals : (char*int) list) =
