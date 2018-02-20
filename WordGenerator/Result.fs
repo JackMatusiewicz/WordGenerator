@@ -4,7 +4,7 @@ type Result<'failure, 'success> =
     | Failure of 'failure
     | Success of 'success
 
-//[<CompilationRepresentation (CompilationRepresentationFlags.ModuleSuffix)>]
+[<CompilationRepresentation (CompilationRepresentationFlags.ModuleSuffix)>]
 module Result =
 
     //TODO - move this into its own List extension file.
