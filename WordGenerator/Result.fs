@@ -56,9 +56,9 @@ module Result =
     let (>>=) = bind
     let (>=>) = compose
 
-    let prepend x xs = x::xs
-
     let rec traverse (f : 'a -> Result<'f, 'b>) (xs : 'a list) : Result<'f, 'b list> =
+        let prepend x xs = x::xs
+        
         match xs with
         | [] -> lift []
         | (h::t) -> prepend <!> (f h) <*> (traverse f t)
