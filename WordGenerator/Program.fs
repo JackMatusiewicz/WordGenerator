@@ -9,8 +9,6 @@ type Prefix = {First : char; Second : char}
 type Trigram = char*char*char
 type TrigramStore = Map<Prefix, Occurrences>
 
-let (<!>) = List.map
-
 let pick (randomRange : int -> int) (occ : Occurrences) : Result<string, char> =
     let data = Map.toList occ |> List.sortBy fst
     let total = data |> List.sumBy snd
