@@ -76,13 +76,13 @@ let add ((f,s,v) : Trigram) (m : TrigramStore) : TrigramStore =
     |> orDefault (Map.add v 1 (Map.empty))
     |> (fun v -> Map.add prefix v m)
 
-let scale (occ : Occurrences) =
-    occ
-    |> Map.toList
-    |> List.map (fun (a,b) -> a,(b*50))
-    |> Map.ofList
-
 let scaleStore (m : TrigramStore) =
+    let scale (occ : Occurrences) =
+        occ
+        |> Map.toList
+        |> List.map (fun (a,b) -> a,(b*50))
+        |> Map.ofList
+
     m
     |> Map.toList
     |> List.map (fun (a,b) -> a, (scale b))
@@ -167,5 +167,5 @@ let main argv =
         ]
         |> constructModel
     Result.bind model buildName
-    |> Result.iter (printfn "%A")
+    |> Result.iter (printfn "%s")
     0
