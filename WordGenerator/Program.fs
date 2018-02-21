@@ -76,6 +76,18 @@ let add ((f,s,v) : Trigram) (m : TrigramStore) : TrigramStore =
     |> orDefault (Map.add v 1 (Map.empty))
     |> (fun v -> Map.add prefix v m)
 
+let scale (occ : Occurrences) =
+    occ
+    |> Map.toList
+    |> List.map (fun (a,b) -> a,(b*50))
+    |> Map.ofList
+
+let scaleStore (m : TrigramStore) =
+    m
+    |> Map.toList
+    |> List.map (fun (a,b) -> a, (scale b))
+    |> Map.ofList
+
 let addSmoothing (m : TrigramStore) : TrigramStore =
     makeTrigram
     <?> ('$' :: ['a' .. 'z'])
@@ -91,7 +103,7 @@ let constructModel (words : Word list) : Result<string, TrigramStore> =
     |> Result.traverse constructTrigrams
     |> Result.map (List.concat)
     |> Result.map (List.fold (flip add) Map.empty)
-    //|> Result.map addSmoothing
+    |> Result.map (scaleStore >> addSmoothing)
 
 let buildName (store : TrigramStore) : Result<string, string> =
     let sb = (new StringBuilder()).Append("$$")
