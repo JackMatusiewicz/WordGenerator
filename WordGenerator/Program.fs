@@ -2,12 +2,7 @@
 
 open WordGenerator
 open Result
-
-type Word = string
-type Occurrences = Map<char, int>
-type Prefix = {First : char; Second : char}
-type Trigram = char*char*char
-type TrigramStore = Map<Prefix, Occurrences>
+open ListExtension
 
 let pick (randomRange : int -> int) (occ : Occurrences) : Result<string, char> =
     let data = Map.toList occ |> List.sortBy fst
@@ -78,7 +73,7 @@ let scaleStore (m : TrigramStore) =
     let scale (occ : Occurrences) =
         occ
         |> Map.toList
-        |> List.map (fun (a,b) -> a,(b*50))
+        |> List.map (fun (a,b) -> a,(b*500))
         |> Map.ofList
 
     m
@@ -88,9 +83,9 @@ let scaleStore (m : TrigramStore) =
 
 let addSmoothing (m : TrigramStore) : TrigramStore =
     makeTrigram
-    <?> ('$' :: ['a' .. 'z'])
-    <&> ('$' :: ['a' .. 'z'])
-    <&> ('@' :: ['a' .. 'z'])
+    |> (flip List.map) ('$' :: ['a' .. 'z'])
+    |> (flip listApply) ('$' :: ['a' .. 'z'])
+    |> (flip listApply) ('@' :: ['a' .. 'z'])
     |> List.filter (fun (a,b,_) -> not (a <> '$' && b = '$'))
     |> List.fold (flip add) m
 

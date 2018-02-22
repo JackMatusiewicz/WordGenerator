@@ -1,25 +1,13 @@
 ﻿namespace WordGenerator
 
+open ListExtension
+
 type Result<'failure, 'success> =
     | Failure of 'failure
     | Success of 'success
 
 [<CompilationRepresentation (CompilationRepresentationFlags.ModuleSuffix)>]
 module Result =
-
-    //TODO - move this into its own List extension file.
-    let (<?>) = List.map
-    let listApply (fs : ('a -> 'b) list) (xs : 'a list) =
-        let rec calc (acc : 'b list list) fs =
-            match fs with
-            | [] ->
-                acc
-                |> List.rev
-                |> List.concat
-            | (h::t) ->
-                calc ((h <?> xs) :: acc) t
-        calc [] fs
-    let (<&>) = listApply
 
     let orDefault (v : 'a) (x : Result<'f, 'a>) =
         match x with
