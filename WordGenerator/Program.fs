@@ -4,9 +4,6 @@ open WordGenerator
 open Result
 open ListExtension
 
-let bimap (f : 'a -> 'b) (g : 'c -> 'd) ((a,b) : 'a*'c) =
-    (f a),(g b)
-
 let pick (randomRange : int -> int) (occ : Occurrences) : Result<string, char> =
     let data = Map.toList occ |> List.sortBy fst
     let total = data |> List.sumBy snd
@@ -76,7 +73,7 @@ let scaleStore (m : TrigramStore) =
     let scale (occ : Occurrences) =
         occ
         |> Map.toList
-        |> List.map (bimap id ((*) 500))
+        |> List.map (Tuple.rightMap ((*) 500))
         |> Map.ofList
 
     m
