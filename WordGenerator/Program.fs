@@ -159,6 +159,8 @@ let main argv =
             "herlin"
         ]
         |> constructModel
-    Result.bind model buildName
-    |> Result.iter (printfn "%s")
+
+    for i in 0..10 do
+        Result.bind model buildName
+        |> Result.iter (printfn "%s")
     0
