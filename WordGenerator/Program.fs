@@ -73,7 +73,7 @@ let scaleStore (m : TrigramStore) =
     let scale (occ : Occurrences) =
         occ
         |> Map.toList
-        |> List.map (Tuple.rightMap ((*) 500))
+        |> List.map (Tuple.map ((*) 500))
         |> Map.ofList
 
     m
