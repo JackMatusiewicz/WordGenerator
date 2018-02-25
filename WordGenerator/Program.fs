@@ -76,7 +76,7 @@ let scaleStore (m : TrigramStore) =
     let scale (occ : Occurrences) =
         occ
         |> Map.toList
-        |> List.map (fun (a,b) -> a,(b*500))
+        |> List.map (bimap id ((*) 500))
         |> Map.ofList
 
     m
